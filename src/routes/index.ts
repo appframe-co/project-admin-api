@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { RoutesInput } from '@/types/types'
 import jwt, { JwtPayload } from 'jsonwebtoken'
+import structure from './structure.route'
 
 type CustomJwtPayload = JwtPayload & { userId: string };
 
@@ -26,4 +27,6 @@ export default ({ app }: RoutesInput) => {
             next(err);
         }
     });
+
+    app.use('/api/structures', structure);
 };
