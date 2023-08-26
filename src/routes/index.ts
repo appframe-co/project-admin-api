@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { RoutesInput } from '@/types/types'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import structure from './structure.route'
+import schemabricks from './schema-bricks.route'
 
 type CustomJwtPayload = JwtPayload & { userId: string };
 
@@ -29,4 +30,5 @@ export default ({ app }: RoutesInput) => {
     });
 
     app.use('/api/structures', structure);
+    app.use('/api/schema_bricks', schemabricks);
 };

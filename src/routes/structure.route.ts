@@ -13,14 +13,9 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
                 authorization: accessToken || ''
             }
         });
-        const { data } = await resFetch.json();
+        const data = await resFetch.json();
 
-        const response = {
-            status: 200,
-            data,
-            message: null
-        };
-        res.json(response);
+        res.json(data);
     } catch (e) {
         res.json({
             data: {error: 'error'}
@@ -41,14 +36,32 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
             }, 
             body: JSON.stringify({ name, code })
         });
-        const { data } = await resFetch.json();
+        const data = await resFetch.json();
 
-        const response = {
-            status: 200,
-            data,
-            message: null
-        };
-        res.json(response);
+        res.json(data);
+    } catch (e) {
+        res.json({
+            data: {error: 'error'}
+        });
+    }
+});
+
+router.put('/', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { authorization: accessToken } = req.headers;
+        let { id, name, code, bricks } = req.body;
+
+        const resFetch = await fetch(`${process.env.URL_STRUCTURE_SERVICE}/api/structures`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: accessToken || ''
+            }, 
+            body: JSON.stringify({ id, name, code, bricks})
+        });
+        const data = await resFetch.json();
+
+        res.json(data);
     } catch (e) {
         res.json({
             data: {error: 'error'}
@@ -68,14 +81,9 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
                 authorization: accessToken || ''
             }
         });
-        const { data } = await resFetch.json();
+        const data = await resFetch.json();
 
-        const response = {
-            status: 200,
-            data,
-            message: null
-        };
-        res.json(response);
+        res.json(data);
     } catch (e) {
         res.json({
             data: {error: 'error'}
