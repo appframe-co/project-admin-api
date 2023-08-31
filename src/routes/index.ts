@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { RoutesInput } from '@/types/types'
 import jwt, { JwtPayload } from 'jsonwebtoken'
+import project from './project.route'
+import accessTokenProject from './access-token-project.route'
 import structure from './structure.route'
 import schemabricks from './schema-bricks.route'
 import data from './data.route'
@@ -11,7 +13,6 @@ export default ({ app }: RoutesInput) => {
     app.use(async function (req: Request, res: Response, next: NextFunction): Promise<void| Response> {
         try {
             const {authorization: accessToken} = req.headers;
-
             if (!accessToken) {
                 return res.status(401).json({message: 'Invalid token'});
             }
@@ -30,6 +31,9 @@ export default ({ app }: RoutesInput) => {
         }
     });
 
+
+    app.use('/api/project', project);
+    app.use('/api/access-token', accessTokenProject);
     app.use('/api/structures', structure);
     app.use('/api/schema_bricks', schemabricks);
     app.use('/api/data', data);

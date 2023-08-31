@@ -4,7 +4,9 @@ const router = express.Router();
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const resFetch = await fetch(`${process.env.URL_STRUCTURE_SERVICE}/api/schema_bricks`, {
+        const { projectId, userId } = res.locals;
+
+        const resFetch = await fetch(`${process.env.URL_PROJECT_SERVICE}/api/access-token/${projectId}?userId=${userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
