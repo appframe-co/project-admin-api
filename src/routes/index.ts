@@ -6,6 +6,8 @@ import accessTokenProject from './access-token-project.route'
 import structure from './structure.route'
 import schemabricks from './schema-bricks.route'
 import data from './data.route'
+import stagedUploadsCreate from './staged-uploads-create.route'
+import dataCreateMedia from './data-create-media.route'
 
 type CustomJwtPayload = JwtPayload & { userId: string };
 
@@ -37,4 +39,6 @@ export default ({ app }: RoutesInput) => {
     app.use('/api/structures', structure);
     app.use('/api/schema_bricks', schemabricks);
     app.use('/api/data', data);
+    app.use('/api/staged_uploads_create', stagedUploadsCreate);
+    app.use('/api/data_create_media', dataCreateMedia);
 };
