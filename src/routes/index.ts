@@ -8,6 +8,8 @@ import schemabricks from './schema-bricks.route'
 import data from './data.route'
 import stagedUploadsCreate from './staged-uploads-create.route'
 import dataCreateMedia from './data-create-media.route'
+import dataDeleteMedia from './data-delete-media.route'
+import deleteMediaS3 from './delete-media-s3.route'
 
 type CustomJwtPayload = JwtPayload & { userId: string };
 
@@ -33,7 +35,6 @@ export default ({ app }: RoutesInput) => {
         }
     });
 
-
     app.use('/api/project', project);
     app.use('/api/access-token', accessTokenProject);
     app.use('/api/structures', structure);
@@ -41,4 +42,6 @@ export default ({ app }: RoutesInput) => {
     app.use('/api/data', data);
     app.use('/api/staged_uploads_create', stagedUploadsCreate);
     app.use('/api/data_create_media', dataCreateMedia);
+    app.use('/api/data_delete_media', dataDeleteMedia);
+    app.use('/api/delete_media_s3', deleteMediaS3);
 };
