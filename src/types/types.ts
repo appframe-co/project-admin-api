@@ -45,3 +45,14 @@ export type TStorage = {
   mediaContentType: string;
   src: string;
 }
+
+export type TData = {
+  id: string;
+  projectId: string;
+  structureId: string;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy: string;
+  updatedBy: string;
+  doc: any;
+}

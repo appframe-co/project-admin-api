@@ -1,7 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { TStorage } from '@/types/types';
+import { TData, TErrorResponse } from '@/types/types';
 
 const router = express.Router();
+
+function isErrorDataList(data: TErrorResponse|{data: TData[], names: string[], codes: string[]}): data is TErrorResponse {
+    return (data as TErrorResponse).error !== undefined;
+}
+function isErrorData(data: TErrorResponse|{data: TData}): data is TErrorResponse {
+    return (data as TErrorResponse).error !== undefined;
+}
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -14,7 +21,11 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
                 'Content-Type': 'application/json'
             }
         });
-        const data = await resFetch.json();
+        const data: {data: TData[], names: string[], codes: string[]}|TErrorResponse = await resFetch.json();
+
+        if (isErrorDataList(data)) {
+            throw new Error('Error fetch data list');
+        }
 
         res.json(data);
     } catch (e) {
@@ -35,7 +46,13 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
             }, 
             body: JSON.stringify({userId, projectId, structureId, doc})
         });
-        const {data} = await resFetch.json();
+        const dataFetch: {data: TData}|TErrorResponse = await resFetch.json();
+
+        if (isErrorData(dataFetch)) {
+            throw new Error('Error fetch data create');
+        }
+
+        const {data} = dataFetch;
 
         const outputImagesFields: any = {};
         for (const imagesField of Object.keys(images)) {
@@ -77,8 +94,14 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
             }, 
             body: JSON.stringify({id, userId, projectId, structureId, doc})
         });
-        const data = await resFetch.json();
+        const dataFetch: {data: TData}|TErrorResponse = await resFetch.json();
 
+        if (isErrorData(dataFetch)) {
+            throw new Error('Error fetch data create');
+        }
+
+        const {data} = dataFetch;
+        
         res.json(data);
     } catch (e) {
         res.json({error: 'error'});
@@ -97,9 +120,13 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
                 'Content-Type': 'application/json'
             }
         });
-        const data = await resFetch.json();
+        const dataFetch: {data: TData}|TErrorResponse = await resFetch.json();
 
-        res.json(data);
+        if (isErrorData(dataFetch)) {
+            throw new Error('Error fetch data');
+        }
+
+        res.json(dataFetch);
     } catch (e) {
         res.json({error: 'error'});
     }
@@ -116,7 +143,11 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
                 'Content-Type': 'application/json'
             }
         });
-        const data = await resFetch.json();
+        const data: {data: TData}|TErrorResponse = await resFetch.json();
+
+        if (isErrorData(data)) {
+            throw new Error('Error fetch data create');
+        }
 
         res.json(data);
     } catch (e) {
