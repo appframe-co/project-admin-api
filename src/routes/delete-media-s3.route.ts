@@ -7,7 +7,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
         const { projectId, userId } = res.locals as { projectId: string, userId: string };
         let { mediaS3Urls } = req.body;
 
-        const resImagesFetch = await fetch(`${process.env.URL_STORAGE_SERVICE}/api/delete_media_s3`, {
+        const resImagesFetch = await fetch(`${process.env.URL_FILE_SERVICE}/api/delete_media_s3`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

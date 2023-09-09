@@ -33,26 +33,15 @@ export type TProjectOutput = {
   projectNumber: number
 }
 
-export type TStorage = {
-  id: string;
-  subjectField: string;
-  filename: string;
-  uuidName: string;
-  width: number;
-  height: number;
-  size: number;
-  mimeType: string;
-  mediaContentType: string;
-  src: string;
-}
+type TDoc = {[key: string]: any}
 
-export type TData = {
-  id: string;
-  projectId: string;
-  structureId: string;
-  createdAt?: string;
-  updatedAt?: string;
-  createdBy: string;
-  updatedBy: string;
-  doc: any;
+export type TEntry = {
+    id: string;
+    projectId: string;
+    structureId: string;
+    createdAt?: string;
+    updatedAt?: string;
+    createdBy: string;
+    updatedBy: string;
+    doc: TDoc;
 }

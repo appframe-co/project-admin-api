@@ -9,7 +9,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 
         const outputImagesFields: any = {};
         for (const imagesField of Object.keys(media)) {
-            const resImagesFetch = await fetch(`${process.env.URL_STORAGE_SERVICE}/api/upload`, {
+            const resImagesFetch = await fetch(`${process.env.URL_FILE_SERVICE}/api/upload`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

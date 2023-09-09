@@ -7,7 +7,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
         const { projectId, userId } = res.locals as { projectId: string, userId: string };
         let { files } = req.body;
 
-        const resFetch = await fetch(`${process.env.URL_STORAGE_SERVICE}/api/staged_uploads_create?userId=${userId}&projectId=${projectId}`, {
+        const resFetch = await fetch(`${process.env.URL_FILE_SERVICE}/api/staged_uploads_create?userId=${userId}&projectId=${projectId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

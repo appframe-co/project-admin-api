@@ -5,17 +5,15 @@ const router = express.Router();
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { projectId, userId } = res.locals as { projectId: string, userId: string };
-        let { dataId, mediaIds } = req.body;
+        let { files, structureId } = req.body;
 
-        const resImagesFetch = await fetch(`${process.env.URL_FILE_SERVICE}/api/delete_media`, {
+        const resImagesFetch = await fetch(`${process.env.URL_FILE_SERVICE}/api/upload_file`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                projectId, 
-                subjectType: 'data', subjectId: dataId, 
-                mediaIds
+                userId, projectId, structureId, files
             })
         });
         const data = await resImagesFetch.json();

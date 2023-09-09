@@ -5,9 +5,10 @@ import project from './project.route'
 import accessTokenProject from './access-token-project.route'
 import structure from './structure.route'
 import schemabricks from './schema-bricks.route'
-import data from './data.route'
+import entries from './entries.route'
 import stagedUploadsCreate from './staged-uploads-create.route'
 import dataCreateMedia from './data-create-media.route'
+import createFile from './create-file.route'
 import dataDeleteMedia from './data-delete-media.route'
 import deleteMediaS3 from './delete-media-s3.route'
 
@@ -39,9 +40,10 @@ export default ({ app }: RoutesInput) => {
     app.use('/api/access-token', accessTokenProject);
     app.use('/api/structures', structure);
     app.use('/api/schema_bricks', schemabricks);
-    app.use('/api/data', data);
+    app.use('/api/entries', entries);
     app.use('/api/staged_uploads_create', stagedUploadsCreate);
     app.use('/api/data_create_media', dataCreateMedia);
+    app.use('/api/create_file', createFile);
     app.use('/api/data_delete_media', dataDeleteMedia);
     app.use('/api/delete_media_s3', deleteMediaS3);
 };
