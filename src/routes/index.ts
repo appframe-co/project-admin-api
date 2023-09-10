@@ -17,14 +17,14 @@ type CustomJwtPayload = JwtPayload & { userId: string };
 export default ({ app }: RoutesInput) => {
     app.use(async function (req: Request, res: Response, next: NextFunction): Promise<void| Response> {
         try {
-            const {authorization: accessToken} = req.headers;
+            const accessToken = req.headers['x-appframe-access-token'] as string;
             if (!accessToken) {
-                return res.status(401).json({message: 'Invalid token'});
+                return res.status(401).json({message: 'Invalid access token'});
             }
 
             const {userId, projectId} = jwt.verify(accessToken, process.env.JWT_SECRET as string) as CustomJwtPayload;
             if (!userId || !projectId) {
-                return res.status(401).json({message: 'Invalid token'});
+                return res.status(401).json({message: 'Invalid access token'});
             }
 
             res.locals.userId = userId;
