@@ -9,6 +9,9 @@ function isErrorEntries(data: TErrorResponse|{entries: TEntry[], names: string[]
 function isErrorEntry(data: TErrorResponse|{entry: TEntry}): data is TErrorResponse {
     return (data as TErrorResponse).error !== undefined;
 }
+function isErrorDeletedEntry(data: TErrorResponse|{}): data is TErrorResponse {
+    return (data as TErrorResponse).error !== undefined;
+}
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -121,9 +124,9 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
                 'Content-Type': 'application/json'
             }
         });
-        const data: {entry: TEntry}|TErrorResponse = await resFetch.json();
+        const data: {}|TErrorResponse = await resFetch.json();
 
-        if (isErrorEntry(data)) {
+        if (isErrorDeletedEntry(data)) {
             throw new Error('Error fetch entry delete');
         }
 

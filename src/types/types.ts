@@ -36,12 +36,24 @@ export type TProjectOutput = {
 type TDoc = {[key: string]: any}
 
 export type TEntry = {
-    id: string;
-    projectId: string;
-    structureId: string;
-    createdAt?: string;
-    updatedAt?: string;
-    createdBy: string;
-    updatedBy: string;
-    doc: TDoc;
+  id: string;
+  projectId: string;
+  structureId: string;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy: string;
+  updatedBy: string;
+  doc: TDoc;
+}
+
+export type TFile = {
+  id: string;
+  filename: string;
+  uuidName: string;
+  width: number;
+  height: number;
+  size: number;
+  mimeType: string;
+  contentType: string;
+  src: string;
 }
