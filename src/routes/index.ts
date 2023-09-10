@@ -11,6 +11,7 @@ import dataCreateMedia from './data-create-media.route'
 import createFile from './create-file.route'
 import dataDeleteMedia from './data-delete-media.route'
 import deleteMediaS3 from './delete-media-s3.route'
+import file from './file.route'
 
 type CustomJwtPayload = JwtPayload & { userId: string };
 
@@ -46,4 +47,5 @@ export default ({ app }: RoutesInput) => {
     app.use('/api/create_file', createFile);
     app.use('/api/data_delete_media', dataDeleteMedia);
     app.use('/api/delete_media_s3', deleteMediaS3);
+    app.use('/api/files', file);
 };
