@@ -23,14 +23,14 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        let { name, code } = req.body;
+        let { name, code, bricks } = req.body;
 
         const resFetch = await fetch(`${process.env.URL_STRUCTURE_SERVICE}/api/structures?userId=${userId}&projectId=${projectId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({ name, code })
+            body: JSON.stringify({ name, code, bricks })
         });
         const data = await resFetch.json();
 
