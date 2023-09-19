@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { RoutesInput } from '@/types/types'
+import { RoutesInput, TErrorResponse, TPlan, TProject } from '@/types/types'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import project from './project.route'
 import accessTokenProject from './access-token-project.route'
@@ -10,6 +10,13 @@ import stagedUploadsCreate from './staged-uploads-create.route'
 import files from './files.route'
 
 type CustomJwtPayload = JwtPayload & { userId: string };
+
+function isErrorProject(data: TErrorResponse|{project: TProject}): data is TErrorResponse {
+    return !!(data as TErrorResponse).error;
+}
+function isErrorPlans(data: TErrorResponse|{plans: TPlan[]}): data is TErrorResponse {
+    return !!(data as TErrorResponse).error;
+}
 
 export default ({ app }: RoutesInput) => {
     app.use(async function (req: Request, res: Response, next: NextFunction): Promise<void| Response> {
@@ -26,6 +33,40 @@ export default ({ app }: RoutesInput) => {
 
             res.locals.userId = userId;
             res.locals.projectId = projectId;
+
+            next();
+        } catch(err) {
+            next(err);
+        }
+    });
+
+    app.use(async function (req: Request, res: Response, next: NextFunction): Promise<void| Response> {
+        try {
+            const {userId, projectId} = res.locals;
+
+            const resFetch = await fetch(`${process.env.URL_PROJECT_SERVICE}/api/projects/${projectId}?userId=${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data: TErrorResponse|{project:TProject} = await resFetch.json();
+            if (isErrorProject(data)) {
+                throw new Error('Invalid project');
+            }
+
+            const resFetchPlans = await fetch(`${process.env.URL_PROJECT_SERVICE}/api/plans?code=${data.project.plan}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const dataPlans: TErrorResponse|{plans:TPlan[]} = await resFetchPlans.json();
+            if (isErrorPlans(dataPlans)) {
+                throw new Error('Invalid plans');
+            }
+
+            res.locals.plan = dataPlans.plans[0];
 
             next();
         } catch(err) {

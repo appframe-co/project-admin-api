@@ -1,12 +1,25 @@
+import { TErrorResponse, TPlan } from '@/types/types';
 import express, { Request, Response, NextFunction } from 'express';
 
 const router = express.Router();
 
+function isErrorCount(data: TErrorResponse|{count:number}): data is TErrorResponse {
+    return !!(data as TErrorResponse).error;
+}
+
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { userId, projectId } = res.locals as {userId: string, projectId: string};
+        const { userId, projectId, plan } = res.locals as {userId: string, projectId: string, plan: TPlan};
 
-        const resFetch = await fetch(`${process.env.URL_STRUCTURE_SERVICE}/api/structures?userId=${userId}&projectId=${projectId}`, {
+        let q = `userId=${userId}&projectId=${projectId}`;
+
+        const feature = plan.features.find(f => f.code === 'structures');
+        if (feature) {
+            const {limit} = feature.rules;
+            q += `&limit=${limit}`;
+        }
+
+        const resFetch = await fetch(`${process.env.URL_STRUCTURE_SERVICE}/api/structures?${q}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -22,8 +35,27 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { userId, projectId } = res.locals as {userId: string, projectId: string};
+        const { userId, projectId, plan } = res.locals as {userId: string, projectId: string, plan: TPlan};
         let { name, code, bricks } = req.body;
+
+        const feature = plan.features.find(f => f.code === 'structures');
+        if (feature) {
+            let q = `userId=${userId}&projectId=${projectId}`;
+            const resFetch = await fetch(`${process.env.URL_STRUCTURE_SERVICE}/api/structures/count?${q}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data: TErrorResponse|{count:number} = await resFetch.json();
+            if (isErrorCount(data)) {
+                throw new Error('error count structures');
+            }
+
+            if (data.count >= feature.rules.limit) {
+                return res.json({error: `Current plan "${plan.name}" is not supported new structure. Please, upgrade your plan.`});
+            }
+        }
 
         const resFetch = await fetch(`${process.env.URL_STRUCTURE_SERVICE}/api/structures?userId=${userId}&projectId=${projectId}`, {
             method: 'POST',

@@ -57,3 +57,20 @@ export type TFile = {
   contentType: string;
   src: string;
 }
+export type TProject = {
+  id: string;
+  name: string;
+  projectNumber: number;
+  plan: string;
+}
+type TFeature = {
+  code: string;
+  rules: {[key: string]: any};
+}
+
+export type TPlan = {
+  name: string;
+  code: string;
+  features: TFeature[];
+  default: boolean;
+}
