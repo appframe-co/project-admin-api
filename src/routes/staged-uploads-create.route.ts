@@ -28,7 +28,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 
             const totalMB = Number.parseFloat((data.total/(1024*1024)).toFixed(2));
             if (totalMB >= feature.rules.limit) {
-                return res.json({error: `Current plan "${plan.name}" is not supported upload new files. Please, upgrade your plan.`});
+                return res.json({error: 'plan_limited', description: `Current plan "${plan.name}" is not supported upload new files. Please, upgrade your plan.`});
             }
         }
 

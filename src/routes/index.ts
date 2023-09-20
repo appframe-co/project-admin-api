@@ -54,6 +54,17 @@ export default ({ app }: RoutesInput) => {
             if (isErrorProject(data)) {
                 throw new Error('Invalid project');
             }
+            const {trialFinishedAt, planFinishedAt} = data.project;
+
+            const trialFinishedAtTimestamp = new Date(trialFinishedAt).getTime();
+            const planFinishedAtTimestamp = new Date(planFinishedAt).getTime();
+
+            const now = Date.now();
+            if (now > trialFinishedAtTimestamp) {
+                if (now > planFinishedAtTimestamp) {
+                    return res.json({error: 'plan_expired', description: `Plan expired. Please, upgrade your plan.`});
+                }
+            }
 
             const resFetchPlans = await fetch(`${process.env.URL_PROJECT_SERVICE}/api/plans?code=${data.project.plan}`, {
                 method: 'GET',

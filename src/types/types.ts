@@ -62,6 +62,8 @@ export type TProject = {
   name: string;
   projectNumber: number;
   plan: string;
+  planFinishedAt: Date;
+  trialFinishedAt: Date;
 }
 type TFeature = {
   code: string;

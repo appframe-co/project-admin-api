@@ -53,7 +53,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
             }
 
             if (data.count >= feature.rules.limit) {
-                return res.json({error: `Current plan "${plan.name}" is not supported new structure. Please, upgrade your plan.`});
+                return res.json({error: 'plan_limited', description: `Current plan "${plan.name}" is not supported new structure. Please, upgrade your plan.`});
             }
         }
 
