@@ -80,7 +80,7 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
         const data: {entry: TEntry}|TErrorResponse = await resFetch.json();
 
         if (isErrorEntry(data)) {
-            throw new Error('Error fetch entry create');
+            throw new Error('Error fetch entry update');
         }
 
         res.json(data);

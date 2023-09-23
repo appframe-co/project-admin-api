@@ -6,6 +6,9 @@ const router = express.Router();
 function isErrorDeletedFile(data: TErrorResponse|{}): data is TErrorResponse {
     return (data as TErrorResponse).error !== undefined;
 }
+function isErrorFile(data: TErrorResponse|{file: TFile}): data is TErrorResponse {
+    return (data as TErrorResponse).error !== undefined;
+}
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -40,6 +43,34 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
             })
         });
         const data = await resFilesFetch.json();
+
+        res.json(data);
+    } catch (e) {
+        res.json({error: 'error'});
+    }
+});
+
+router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { userId, projectId } = res.locals as {userId: string, projectId: string};
+        let { alt, id } = req.body;
+
+        if (id !== req.params.id) {
+            throw new Error('File ID error');
+        }
+
+        const resFetch = await fetch(`${process.env.URL_FILE_SERVICE}/api/files/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }, 
+            body: JSON.stringify({userId, projectId, id, alt})
+        });
+        const data: {file: TFile}|TErrorResponse = await resFetch.json();
+
+        if (isErrorFile(data)) {
+            throw new Error('Error fetch file update');
+        }
 
         res.json(data);
     } catch (e) {
