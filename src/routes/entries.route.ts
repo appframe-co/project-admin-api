@@ -4,13 +4,16 @@ import { TEntry, TErrorResponse } from '@/types/types';
 const router = express.Router();
 
 function isErrorEntries(data: TErrorResponse|{entries: TEntry[], names: string[], codes: string[]}): data is TErrorResponse {
-    return (data as TErrorResponse).error !== undefined;
+    return !!(data as TErrorResponse).error;
+}
+function isErrorEntriesCount(data: TErrorResponse|{count: number}): data is TErrorResponse {
+    return !!(data as TErrorResponse).error;
 }
 function isErrorEntry(data: TErrorResponse|{entry: TEntry}): data is TErrorResponse {
-    return (data as TErrorResponse).error !== undefined;
+    return !!(data as TErrorResponse).error;
 }
 function isErrorDeletedEntry(data: TErrorResponse|{}): data is TErrorResponse {
-    return (data as TErrorResponse).error !== undefined;
+    return !!(data as TErrorResponse).error;
 }
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
@@ -28,6 +31,29 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
         if (isErrorEntries(data)) {
             throw new Error('Error fetch entries');
+        }
+
+        res.json(data);
+    } catch (e) {
+        res.json({error: 'error'});
+    }
+});
+
+router.get('/count', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { userId, projectId } = res.locals as {userId: string, projectId: string};
+        const { structureId } = req.query;
+
+        const resFetch = await fetch(`${process.env.URL_ENTRY_SERVICE}/api/entries/count?userId=${userId}&projectId=${projectId}&structureId=${structureId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data: {count:number}|TErrorResponse = await resFetch.json();
+
+        if (isErrorEntriesCount(data)) {
+            throw new Error('Error fetch entries count');
         }
 
         res.json(data);
