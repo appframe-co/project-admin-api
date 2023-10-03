@@ -75,11 +75,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
             }, 
             body: JSON.stringify({userId, projectId, structureId, doc})
         });
-        const data: {entry: TEntry}|TErrorResponse = await resFetch.json();
-
-        if (isErrorEntry(data)) {
-            throw new Error('Error fetch entry create');
-        }
+        const data: {entry: TEntry|null, userErrors: any} = await resFetch.json();
 
         res.json(data);
     } catch (e) {
