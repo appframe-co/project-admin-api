@@ -23,7 +23,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { projectId, userId } = res.locals as { projectId: string, userId: string };
-        let { id, name, code, bricks } = req.body;
+        let { id, name, currencies } = req.body;
 
         if (projectId !== req.params.id || projectId !== id) {
             throw new Error('Project ID error');
@@ -34,7 +34,7 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({ id, name, code, bricks})
+            body: JSON.stringify({ id, name, currencies})
         });
         const data = await resFetch.json();
 

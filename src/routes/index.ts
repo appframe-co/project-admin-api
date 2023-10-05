@@ -8,6 +8,7 @@ import schemabricks from './schema-bricks.route'
 import entries from './entries.route'
 import stagedUploadsCreate from './staged-uploads-create.route'
 import files from './files.route'
+import system from './system.route'
 
 type CustomJwtPayload = JwtPayload & { userId: string };
 
@@ -92,4 +93,5 @@ export default ({ app }: RoutesInput) => {
     app.use('/api/entries', entries);
     app.use('/api/staged_uploads_create', stagedUploadsCreate);
     app.use('/api/files', files);
+    app.use('/api/system', system);
 };
