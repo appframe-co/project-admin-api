@@ -76,3 +76,15 @@ export type TPlan = {
   features: TFeature[];
   default: boolean;
 }
+
+export type TAlert = {
+  id: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+  structureId: string;
+  subjectId: string;
+  subjectType: string;
+  userId: string;
+  projectId: string;
+}

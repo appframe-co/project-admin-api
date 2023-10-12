@@ -75,7 +75,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        let { id, name, code, bricks } = req.body;
+        const { id } = req.body;
 
         if (id !== req.params.id) {
             throw new Error('Structure ID error');
@@ -86,7 +86,7 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({ id, name, code, bricks})
+            body: JSON.stringify(req.body)
         });
         const data = await resFetch.json();
 
