@@ -19,6 +19,10 @@ router.post('/alert', async (req: Request, res: Response, next: NextFunction) =>
             },
             body: JSON.stringify({ userId, projectId })
         });
+        if (!resFetch.ok) {
+            throw new Error('error');
+        }
+
         const dataJson: TErrorResponse|{alert: TAlert} = await resFetch.json();
         if (isErrorAlert(dataJson)) {
             return res.json({alert: null});
