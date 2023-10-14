@@ -10,7 +10,6 @@ import stagedUploadsCreate from './staged-uploads-create.route'
 import files from './files.route'
 import system from './system.route'
 import alert from './alerts.route'
-import webhooks from './webhooks.route'
 
 type CustomJwtPayload = JwtPayload & { userId: string };
 
@@ -97,6 +96,4 @@ export default ({ app }: RoutesInput) => {
     app.use('/api/files', files);
     app.use('/api/system', system);
     app.use('/api/alerts', alert);
-
-    app.use('/webhooks', webhooks);
 };
