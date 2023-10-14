@@ -26,16 +26,17 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         }
 
         const output = data.alerts.map(alert => {
-            const createdAt = getDateV2(alert.createdAt);
+            let link = null;
+            if (alert.subjectType === 'entries') {
+                link = `/structures/${alert.structureId}/entries/${alert.subjectId}`;
+            }
 
             return {
                 id: alert.id,
-                subjectId: alert.subjectId,
-                subjectType: alert.subjectType,
-                structureId: alert.structureId,
                 message: alert.message,
                 read: alert.read,
-                createdAt
+                createdAt: getDateV2(alert.createdAt),
+                link
             };
         });
         res.json({alerts: output});
