@@ -86,7 +86,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        let { alt, id } = req.body;
+        let { id, alt, caption } = req.body;
 
         if (id !== req.params.id) {
             throw new Error('File ID error');
@@ -97,7 +97,7 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({userId, projectId, id, alt})
+            body: JSON.stringify({userId, projectId, id, alt, caption})
         });
         const data: {file: TFile}|TErrorResponse = await resFetch.json();
 

@@ -88,3 +88,18 @@ export type TAlert = {
   userId: string;
   projectId: string;
 }
+
+export type TValueTranslation = {[key: string]: any}
+
+export type TTranslation = {
+  id: string;
+	userId: string; 
+  projectId: string;
+  structureId: string;
+  subjectId: string;
+  subject: string;
+  key: string;
+  value: TValueTranslation;
+  lang: string;
+  createdAt?: string;
+}

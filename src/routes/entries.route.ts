@@ -67,7 +67,6 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
         let { doc, structureId } = req.body;
 
-        // POST new entry
         const resFetch = await fetch(`${process.env.URL_ENTRY_SERVICE}/api/entries`, {
             method: 'POST',
             headers: {
