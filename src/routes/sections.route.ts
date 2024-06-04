@@ -69,14 +69,14 @@ router.get('/count', async (req: Request, res: Response, next: NextFunction) => 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        let { doc, structureId, sectionId } = req.body;
+        let { doc, structureId, parentId } = req.body;
 
         const resFetch = await fetch(`${process.env.URL_ENTRY_SERVICE}/api/sections`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({userId, projectId, structureId, sectionId, doc})
+            body: JSON.stringify({userId, projectId, structureId, parentId, doc})
         });
         const data: {sections: TSection|null, userErrors: any} = await resFetch.json();
 
