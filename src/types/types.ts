@@ -46,6 +46,17 @@ export type TEntry = {
   doc: TDoc;
 }
 
+export type TSection = {
+  id: string;
+  projectId: string;
+  structureId: string;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy: string;
+  updatedBy: string;
+  doc: TDoc;
+}
+
 export type TFile = {
   id: string;
   filename: string;
@@ -56,6 +67,7 @@ export type TFile = {
   mimeType: string;
   contentType: string;
   src: string;
+  ext: string;
 }
 export type TProject = {
   id: string;
@@ -102,4 +114,9 @@ export type TTranslation = {
   value: TValueTranslation;
   lang: string;
   createdAt?: string;
+}
+
+export type TInputFile = {
+  originalSource: string,
+  contentType: string
 }

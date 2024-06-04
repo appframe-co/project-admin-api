@@ -57,12 +57,48 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
             }
         }
 
+        const sections = {
+            bricks: [
+                {
+                    name: 'Name',
+                    key: 'name',
+                    type: 'single_line_text',
+                    validations: [
+                        {
+                            code: 'required',
+                            type: 'checkbox',
+                            value: true
+                        }
+                    ],
+                    system: true
+                },
+                {
+                    name: 'Code',
+                    key: 'code',
+                    type: 'url_handle',
+                    validations: [
+                        {
+                            code: 'brick_reference',
+                            type: 'text',
+                            value: ''
+                        },
+                        {
+                            code: 'transliteration',
+                            type: 'checkbox',
+                            value: true
+                        }
+                    ],
+                    system: true
+                },
+            ]
+        }
+
         const resFetch = await fetch(`${process.env.URL_STRUCTURE_SERVICE}/api/structures?userId=${userId}&projectId=${projectId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({ name, code, bricks })
+            body: JSON.stringify({ name, code, bricks, sections })
         });
         const data = await resFetch.json();
 
@@ -92,6 +128,7 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
 
         res.json(data);
     } catch (e) {
+        console.log(e)
         res.json({error: 'error'});
     }
 });

@@ -11,6 +11,7 @@ import files from './files.route'
 import system from './system.route'
 import alert from './alerts.route'
 import translations from './translations.route'
+import sections from './sections.route'
 
 type CustomJwtPayload = JwtPayload & { userId: string };
 
@@ -98,4 +99,5 @@ export default ({ app }: RoutesInput) => {
     app.use('/api/system', system);
     app.use('/api/alerts', alert);
     app.use('/api/translations', translations);
+    app.use('/api/sections', sections);
 };

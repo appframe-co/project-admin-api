@@ -1,4 +1,4 @@
-import { TErrorResponse, TFile } from '@/types/types';
+import { TErrorResponse, TFile, TInputFile } from '@/types/types';
 import express, { Request, Response, NextFunction } from 'express';
 
 const router = express.Router();
@@ -61,10 +61,14 @@ router.get('/count', async (req: Request, res: Response, next: NextFunction) => 
     }
 });
 
+type TBodyPost = {
+    structureId: string,
+    files: TInputFile[]
+}
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { projectId, userId } = res.locals as { projectId: string, userId: string };
-        let { files, structureId } = req.body;
+        let { files, structureId }: TBodyPost = req.body;
 
         const resFilesFetch = await fetch(`${process.env.URL_FILE_SERVICE}/api/files`, {
             method: 'POST',
@@ -75,7 +79,19 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
                 userId, projectId, structureId, files
             })
         });
-        const data = await resFilesFetch.json();
+        const data: {files: TFile[]} = await resFilesFetch.json();
+
+        const filesWithIds = files.map((f, i:number) => ({...f, id: data.files[i]['id'], ext: data.files[i]['ext']}));
+
+        fetch(`${process.env.URL_STORAGE}/api/files/upload`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId, projectId, structureId, files: filesWithIds
+            })
+        });
 
         res.json(data);
     } catch (e) {
