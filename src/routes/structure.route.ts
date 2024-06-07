@@ -128,7 +128,6 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
 
         res.json(data);
     } catch (e) {
-        console.log(e)
         res.json({error: 'error'});
     }
 });

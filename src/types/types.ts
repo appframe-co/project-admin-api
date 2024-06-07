@@ -120,3 +120,23 @@ export type TInputFile = {
   originalSource: string,
   contentType: string
 }
+
+
+type TItem = {
+  title: string;
+  subject: string;
+  subjectId: string;
+  subjectParams: string;
+  type: string;
+  items: TItem[];
+}
+
+export type TMenu = {
+  id: string;
+  projectId: string;
+  title: string;
+  handle: string;
+  items: TItem[];
+  createdAt?: string;
+  updatedAt?: string;
+}
