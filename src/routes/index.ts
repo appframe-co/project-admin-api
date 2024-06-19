@@ -3,8 +3,8 @@ import { RoutesInput, TErrorResponse, TPlan, TProject } from '@/types/types'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import project from './project.route'
 import accessTokenProject from './access-token-project.route'
-import structure from './structure.route'
-import schemabricks from './schema-bricks.route'
+import content from './content.route'
+import schemafields from './schema-fields.route'
 import entries from './entries.route'
 import stagedUploadsCreate from './staged-uploads-create.route'
 import files from './files.route'
@@ -13,6 +13,8 @@ import alert from './alerts.route'
 import translations from './translations.route'
 import sections from './sections.route'
 import menus from './menus.route'
+import menuItems from './menu-items.route'
+import translationsMenuItem from './translations-menu-item.route'
 
 type CustomJwtPayload = JwtPayload & { userId: string };
 
@@ -92,14 +94,20 @@ export default ({ app }: RoutesInput) => {
 
     app.use('/api/project', project);
     app.use('/api/access-token', accessTokenProject);
-    app.use('/api/structures', structure);
-    app.use('/api/schema_bricks', schemabricks);
+
+    app.use('/api/schema_fields', schemafields);
+
+    app.use('/api/contents', content);
     app.use('/api/entries', entries);
+    app.use('/api/sections', sections);
+    app.use('/api/translations', translations);
+
+    app.use('/api/menus', menus);
+    app.use('/api/menu_items', menuItems);
+    app.use('/api/translations_menu_item', translationsMenuItem);
+
     app.use('/api/staged_uploads_create', stagedUploadsCreate);
     app.use('/api/files', files);
     app.use('/api/system', system);
     app.use('/api/alerts', alert);
-    app.use('/api/translations', translations);
-    app.use('/api/sections', sections);
-    app.use('/api/menus', menus);
 };

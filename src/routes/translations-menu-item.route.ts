@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { TEntry, TErrorResponse, TTranslation } from '@/types/types';
+import { TErrorResponse, TTranslation } from '@/types/types';
 
 const router = express.Router();
 
@@ -13,9 +13,9 @@ function isErrorTranslation(data: TErrorResponse|{translation: TTranslation}): d
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        const { contentId, subjectId, subject, lang } = req.query;
+        const { menuId, subjectId, subject, lang } = req.query;
 
-        const resFetch = await fetch(`${process.env.URL_CONTENT_SERVICE}/api/translations?userId=${userId}&projectId=${projectId}&contentId=${contentId}&subjectId=${subjectId}&subject=${subject}&lang=${lang}`, {
+        const resFetch = await fetch(`${process.env.URL_MENU_SERVICE}/api/translations?userId=${userId}&projectId=${projectId}&menuId=${menuId}&subjectId=${subjectId}&subject=${subject}&lang=${lang}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -36,14 +36,14 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        let { contentId, subjectId, subject, key, value, lang } = req.body;
+        let { menuId, subjectId, subject, key, value, lang } = req.body;
 
-        const resFetch = await fetch(`${process.env.URL_CONTENT_SERVICE}/api/translations`, {
+        const resFetch = await fetch(`${process.env.URL_MENU_SERVICE}/api/translations`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({userId, projectId, contentId, subjectId, lang, subject, key, value})
+            body: JSON.stringify({userId, projectId, menuId, subjectId, lang, subject, key, value})
         });
         const data: {translation: TTranslation|null, userErrors: any} = await resFetch.json();
 
@@ -56,18 +56,18 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        let { id, contentId, subjectId, subject, key, value, lang } = req.body;
+        let { id, menuId, subjectId, subject, key, value, lang } = req.body;
 
         if (id !== req.params.id) {
             throw new Error('Translation ID error');
         }
 
-        const resFetch = await fetch(`${process.env.URL_CONTENT_SERVICE}/api/translations/${id}`, {
+        const resFetch = await fetch(`${process.env.URL_MENU_SERVICE}/api/translations/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({id, userId, projectId, contentId, subjectId, lang, subject, key, value})
+            body: JSON.stringify({id, userId, projectId, menuId, subjectId, lang, subject, key, value})
         });
         const data: {translation: TTranslation}|TErrorResponse = await resFetch.json();
 

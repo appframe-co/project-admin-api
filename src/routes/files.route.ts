@@ -62,13 +62,13 @@ router.get('/count', async (req: Request, res: Response, next: NextFunction) => 
 });
 
 type TBodyPost = {
-    structureId: string,
+    contentId: string,
     files: TInputFile[]
 }
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { projectId, userId } = res.locals as { projectId: string, userId: string };
-        let { files, structureId }: TBodyPost = req.body;
+        let { files, contentId }: TBodyPost = req.body;
 
         const resFilesFetch = await fetch(`${process.env.URL_FILE_SERVICE}/api/files`, {
             method: 'POST',
@@ -76,7 +76,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                userId, projectId, structureId, files
+                userId, projectId, contentId, files
             })
         });
         const data: {files: TFile[]} = await resFilesFetch.json();
@@ -89,7 +89,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                userId, projectId, structureId, files: filesWithIds
+                userId, projectId, contentId, files: filesWithIds
             })
         });
 

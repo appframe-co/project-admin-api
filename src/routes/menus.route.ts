@@ -61,7 +61,7 @@ router.get('/count', async (req: Request, res: Response, next: NextFunction) => 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId, plan } = res.locals as {userId: string, projectId: string, plan: TPlan};
-        let { title, handle, items } = req.body;
+        let { name, code, items } = req.body;
 
         const feature = plan.features.find(f => f.code === 'menus');
         if (feature) {
@@ -87,7 +87,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({ title, handle, items })
+            body: JSON.stringify({ name, code, items })
         });
         const data = await resFetch.json();
 

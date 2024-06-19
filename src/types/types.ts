@@ -38,7 +38,7 @@ type TDoc = {[key: string]: any}
 export type TEntry = {
   id: string;
   projectId: string;
-  structureId: string;
+  contentId: string;
   createdAt?: string;
   updatedAt?: string;
   createdBy: string;
@@ -49,7 +49,7 @@ export type TEntry = {
 export type TSection = {
   id: string;
   projectId: string;
-  structureId: string;
+  contentId: string;
   createdAt?: string;
   updatedAt?: string;
   createdBy: string;
@@ -94,7 +94,7 @@ export type TAlert = {
   message: string;
   read: boolean;
   createdAt: string;
-  structureId: string;
+  contentId: string;
   subjectId: string;
   subjectType: string;
   userId: string;
@@ -107,7 +107,7 @@ export type TTranslation = {
   id: string;
 	userId: string; 
   projectId: string;
-  structureId: string;
+  contentId: string;
   subjectId: string;
   subject: string;
   key: string;
@@ -122,21 +122,35 @@ export type TInputFile = {
 }
 
 
-type TItem = {
-  title: string;
-  subject: string;
-  subjectId: string;
-  subjectParams: string;
-  type: string;
-  items: TItem[];
-}
-
 export type TMenu = {
   id: string;
+  userId: string;
   projectId: string;
-  title: string;
-  handle: string;
-  items: TItem[];
+  name: string;
+  code: string;
+  translations?: {
+    enabled: boolean;
+  };
+  items: {
+    fields: {
+      type: string;
+      name: string;
+    }[];
+  };
   createdAt?: string;
   updatedAt?: string;
+}
+
+export type TItem = {
+  id: string;
+  projectId: string;
+  userId: string;
+  menuId: string;
+  parentId: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+  doc: TDoc;
+  items?: TItem[];
 }

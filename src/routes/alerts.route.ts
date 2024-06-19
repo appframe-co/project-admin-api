@@ -28,7 +28,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         const output = data.alerts.map(alert => {
             let link = null;
             if (alert.subjectType === 'entries') {
-                link = `/structures/${alert.structureId}/entries/${alert.subjectId}`;
+                link = `/contents/${alert.contentId}/entries/${alert.subjectId}`;
             }
 
             return {

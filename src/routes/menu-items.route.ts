@@ -1,40 +1,40 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { TErrorResponse, TSection } from '@/types/types';
+import { TErrorResponse, TItem } from '@/types/types';
 
 const router = express.Router();
 
-function isErrorSections(data: TErrorResponse|{sections: TSection[], names: string[], codes: string[]}): data is TErrorResponse {
+function isErrorItems(data: TErrorResponse|{items: TItem[], names: string[], codes: string[]}): data is TErrorResponse {
     return !!(data as TErrorResponse).error;
 }
-function isErrorSectionsCount(data: TErrorResponse|{count: number}): data is TErrorResponse {
+function isErrorItemsCount(data: TErrorResponse|{count: number}): data is TErrorResponse {
     return !!(data as TErrorResponse).error;
 }
-function isErrorSection(data: TErrorResponse|{section: TSection}): data is TErrorResponse {
+function isErrorItem(data: TErrorResponse|{item: TItem}): data is TErrorResponse {
     return !!(data as TErrorResponse).error;
 }
-function isErrorDeletedSection(data: TErrorResponse|{}): data is TErrorResponse {
+function isErrorDeletedItem(data: TErrorResponse|{}): data is TErrorResponse {
     return !!(data as TErrorResponse).error;
 }
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        const { contentId, page=1, limit=10, parentId } = req.query;
+        const { menuId, page=1, limit=10, parentId } = req.query;
 
-        let q = `userId=${userId}&projectId=${projectId}&contentId=${contentId}&page=${page}&limit=${limit}`;
+        let q = `userId=${userId}&projectId=${projectId}&menuId=${menuId}&page=${page}&limit=${limit}`;
         if (parentId) {
             q += `&parent_id=${parentId}`;
         }
 
-        const resFetch = await fetch(`${process.env.URL_CONTENT_SERVICE}/api/sections?${q}`, {
+        const resFetch = await fetch(`${process.env.URL_MENU_SERVICE}/api/items?${q}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        const data: {sections: TSection[], names: string[], codes: string[]}|TErrorResponse = await resFetch.json();
+        const data: {items: TItem[], names: string[], codes: string[]}|TErrorResponse = await resFetch.json();
 
-        if (isErrorSections(data)) {
-            throw new Error('Error fetch sections');
+        if (isErrorItems(data)) {
+            throw new Error('Error fetch items');
         }
 
         res.json(data);
@@ -46,9 +46,9 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 router.get('/count', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        const { contentId } = req.query;
+        const { menuId } = req.query;
 
-        const resFetch = await fetch(`${process.env.URL_CONTENT_SERVICE}/api/sections/count?userId=${userId}&projectId=${projectId}&contentId=${contentId}`, {
+        const resFetch = await fetch(`${process.env.URL_MENU_SERVICE}/api/items/count?userId=${userId}&projectId=${projectId}&menuId=${menuId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -56,8 +56,8 @@ router.get('/count', async (req: Request, res: Response, next: NextFunction) => 
         });
         const data: {count:number}|TErrorResponse = await resFetch.json();
 
-        if (isErrorSectionsCount(data)) {
-            throw new Error('Error fetch sections count');
+        if (isErrorItemsCount(data)) {
+            throw new Error('Error fetch items count');
         }
 
         res.json(data);
@@ -69,16 +69,16 @@ router.get('/count', async (req: Request, res: Response, next: NextFunction) => 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        let { doc, contentId, parentId } = req.body;
+        let { subject, subjectId, doc, menuId, parentId } = req.body;
 
-        const resFetch = await fetch(`${process.env.URL_CONTENT_SERVICE}/api/sections`, {
+        const resFetch = await fetch(`${process.env.URL_MENU_SERVICE}/api/items`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({userId, projectId, contentId, parentId, doc})
+            body: JSON.stringify({userId, projectId, menuId, parentId, doc, subject, subjectId})
         });
-        const data: {section: TSection|null, userErrors: any} = await resFetch.json();
+        const data: {item: TItem|null, userErrors: any} = await resFetch.json();
 
         res.json(data);
     } catch (e) {
@@ -89,23 +89,23 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        let { doc, contentId, id } = req.body;
+        let { subject, subjectId, doc, menuId, id } = req.body;
 
         if (id !== req.params.id) {
-            throw new Error('Section ID error');
+            throw new Error('Item ID error');
         }
 
-        const resFetch = await fetch(`${process.env.URL_CONTENT_SERVICE}/api/sections/${id}`, {
+        const resFetch = await fetch(`${process.env.URL_MENU_SERVICE}/api/items/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             }, 
-            body: JSON.stringify({id, userId, projectId, contentId, doc})
+            body: JSON.stringify({id, userId, projectId, menuId, doc, subject, subjectId})
         });
-        const data: {section: TSection}|TErrorResponse = await resFetch.json();
+        const data: {item: TItem}|TErrorResponse = await resFetch.json();
 
-        if (isErrorSection(data)) {
-            throw new Error('Error fetch section update');
+        if (isErrorItem(data)) {
+            throw new Error('Error fetch item update');
         }
 
         res.json(data);
@@ -118,18 +118,18 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
         const { id } = req.params;
-        const { contentId } = req.query;
+        const { menuId } = req.query;
 
-        const resFetch = await fetch(`${process.env.URL_CONTENT_SERVICE}/api/sections/${id}?userId=${userId}&projectId=${projectId}&contentId=${contentId}`, {
+        const resFetch = await fetch(`${process.env.URL_MENU_SERVICE}/api/items/${id}?userId=${userId}&projectId=${projectId}&menuId=${menuId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        const data: {section: TSection}|TErrorResponse = await resFetch.json();
+        const data: {item: TItem}|TErrorResponse = await resFetch.json();
 
-        if (isErrorSection(data)) {
-            throw new Error('Error fetch section');
+        if (isErrorItem(data)) {
+            throw new Error('Error fetch item');
         }
 
         res.json(data);
@@ -143,7 +143,7 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
         const { id } = req.params;
 
-        const resFetch = await fetch(`${process.env.URL_CONTENT_SERVICE}/api/sections/${id}?userId=${userId}&projectId=${projectId}`, {
+        const resFetch = await fetch(`${process.env.URL_MENU_SERVICE}/api/items/${id}?userId=${userId}&projectId=${projectId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -151,8 +151,8 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
         });
         const data: {}|TErrorResponse = await resFetch.json();
 
-        if (isErrorDeletedSection(data)) {
-            throw new Error('Error fetch section delete');
+        if (isErrorDeletedItem(data)) {
+            throw new Error('Error fetch item delete');
         }
 
         res.json(data);
@@ -160,6 +160,5 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
         res.json({error: 'error'});
     }
 });
-
 
 export default router;
