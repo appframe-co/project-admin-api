@@ -16,8 +16,8 @@ if (app.get('env') === 'production') {
 
 app.use(cors());
 app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true}));
+app.use(bodyParser.json({limit: '1MB'}));
+app.use(bodyParser.urlencoded({ extended: true, limit: '1MB'}));
 
 Routes({ app });
 
