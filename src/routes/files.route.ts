@@ -81,18 +81,6 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
         });
         const data: {files: TFile[]} = await resFilesFetch.json();
 
-        const filesWithIds = files.map((f, i:number) => ({...f, id: data.files[i]['id'], ext: data.files[i]['ext']}));
-
-        fetch(`${process.env.URL_STORAGE}/api/files/upload`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                userId, projectId, contentId, files: filesWithIds
-            })
-        });
-
         res.json(data);
     } catch (e) {
         res.json({error: 'error'});
