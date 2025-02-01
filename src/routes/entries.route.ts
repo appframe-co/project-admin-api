@@ -19,11 +19,15 @@ function isErrorDeletedEntry(data: TErrorResponse|{}): data is TErrorResponse {
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
-        const { contentId, page=1, limit=10, sectionId } = req.query;
+        const { contentId, page=1, limit=10, sectionId, searchFieldKey, searchFieldValue } = req.query;
 
         let q = `userId=${userId}&projectId=${projectId}&contentId=${contentId}&page=${page}&limit=${limit}`;
         if (sectionId) {
             q += `&section_id=${sectionId}`;
+        }
+
+        if (searchFieldKey && searchFieldValue) {
+            q += `&searchFieldKey=${searchFieldKey}&searchFieldValue=${searchFieldValue}`;
         }
 
         const resFetch = await fetch(`${process.env.URL_CONTENT_SERVICE}/api/entries?${q}`, {
