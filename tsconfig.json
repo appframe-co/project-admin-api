@@ -5,9 +5,12 @@
       "rootDir": "./src",
       "outDir": "./build",
       "esModuleInterop": true,
+      "typeRoots": ["./node_modules/@types", "./src/types"], 
+      "types": ["node", "express"],
       "strict": true,
       "paths": {
         "@/*": ["./src/*"]
       }
-    }
+    },
+    "include": ["src"]
   }

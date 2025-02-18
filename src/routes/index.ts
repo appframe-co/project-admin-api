@@ -18,6 +18,9 @@ import translationsMenuItem from './translations-menu-item.route'
 
 type CustomJwtPayload = JwtPayload & { userId: string };
 
+function isErrorProjectAccessToken(data: TErrorResponse|{projectId: string, accessToken: string}): data is TErrorResponse {
+    return !!(data as TErrorResponse).error;
+}
 function isErrorProject(data: TErrorResponse|{project: TProject}): data is TErrorResponse {
     return !!(data as TErrorResponse).error;
 }
@@ -51,12 +54,14 @@ export default ({ app }: RoutesInput) => {
         try {
             const {userId, projectId} = res.locals;
 
-            const resFetch = await fetch(`${process.env.URL_PROJECT_SERVICE}/api/projects/${projectId}?userId=${userId}`, {
+            const init = {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            });
+            };
+
+            const resFetch = await fetch(`${process.env.URL_PROJECT_SERVICE}/api/projects/${projectId}?userId=${userId}`, init);
             const data: TErrorResponse|{project:TProject} = await resFetch.json();
             if (isErrorProject(data)) {
                 throw new Error('Invalid project');
@@ -73,18 +78,19 @@ export default ({ app }: RoutesInput) => {
                 }
             }
 
-            const resFetchPlans = await fetch(`${process.env.URL_PROJECT_SERVICE}/api/plans?code=${data.project.plan}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            const dataPlans: TErrorResponse|{plans:TPlan[]} = await resFetchPlans.json();
+            const [dataPlans, dataAccessToken]:[TErrorResponse|{plans: TPlan[]}, TErrorResponse|{projectId: string, accessToken: string}] = await Promise.all([
+                fetch(`${process.env.URL_PROJECT_SERVICE}/api/plans?code=${data.project.plan}`, init).then(res => res.json()),
+                fetch(`${process.env.URL_PROJECT_SERVICE}/api/access-token/${projectId}?userId=${userId}`, init).then(res => res.json())
+            ]);
             if (isErrorPlans(dataPlans)) {
                 throw new Error('Invalid plans');
             }
-
+            if (isErrorProjectAccessToken(dataAccessToken)) {
+                throw new Error('Invalid project accesstoken');
+            }
             res.locals.plan = dataPlans.plans[0];
+
+            req.accessTokenProject = dataAccessToken.accessToken;
 
             next();
         } catch(err) {

@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { TErrorResponse, TItem } from '@/types/types';
+import { TErrorResponse, TItem, TMenu } from '@/types/types';
 
 const router = express.Router();
 
@@ -15,6 +15,17 @@ function isErrorItem(data: TErrorResponse|{item: TItem}): data is TErrorResponse
 function isErrorDeletedItem(data: TErrorResponse|{}): data is TErrorResponse {
     return !!(data as TErrorResponse).error;
 }
+
+const cacheData = (accessTokenProject:string, {code}:{code:string}): void => {
+    fetch(`${process.env.URL_PROJECT_API}/${process.env.VERSION_PROJECT_API}/items/${code}.json?clear_cache=y`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-AppFrame-Project-Access-Token': accessTokenProject ?? ''
+        }
+    }).then(res => res.json());
+};
+
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
@@ -78,7 +89,11 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
             }, 
             body: JSON.stringify({userId, projectId, menuId, parentId, doc, subject, subjectId})
         });
-        const data: {item: TItem|null, userErrors: any} = await resFetch.json();
+        const data: {item: TItem|null, menu: TMenu, userErrors: any} = await resFetch.json();
+
+        if (req.accessTokenProject && data.menu) {
+            cacheData(req.accessTokenProject, {code: data.menu.code});
+        }
 
         res.json(data);
     } catch (e) {
@@ -102,10 +117,14 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
             }, 
             body: JSON.stringify({id, userId, projectId, menuId, doc, subject, subjectId})
         });
-        const data: {item: TItem}|TErrorResponse = await resFetch.json();
+        const data: {item: TItem, menu: TMenu}|TErrorResponse = await resFetch.json();
 
         if (isErrorItem(data)) {
             throw new Error('Error fetch item update');
+        }
+
+        if (req.accessTokenProject && data.menu) {
+            cacheData(req.accessTokenProject, {code: data.menu.code});
         }
 
         res.json(data);
@@ -142,17 +161,22 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
     try {
         const { userId, projectId } = res.locals as {userId: string, projectId: string};
         const { id } = req.params;
+        const { menuId } = req.body;
 
-        const resFetch = await fetch(`${process.env.URL_MENU_SERVICE}/api/items/${id}?userId=${userId}&projectId=${projectId}`, {
+        const resFetch = await fetch(`${process.env.URL_MENU_SERVICE}/api/items/${id}?userId=${userId}&projectId=${projectId}&menuId=${menuId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        const data: {}|TErrorResponse = await resFetch.json();
+        const data: {menu: TMenu}|TErrorResponse = await resFetch.json();
 
         if (isErrorDeletedItem(data)) {
             throw new Error('Error fetch item delete');
+        }
+
+        if (req.accessTokenProject && data.menu) {
+            cacheData(req.accessTokenProject, {code: data.menu.code});
         }
 
         res.json(data);

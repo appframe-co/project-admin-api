@@ -76,6 +76,7 @@ export type TProject = {
   plan: string;
   planFinishedAt: Date;
   trialFinishedAt: Date;
+  token: string;
 }
 type TFeature = {
   code: string;
