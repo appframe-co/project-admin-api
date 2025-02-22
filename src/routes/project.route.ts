@@ -1,6 +1,17 @@
+import { TProject } from '@/types/types';
 import express, { Request, Response, NextFunction } from 'express';
 
 const router = express.Router();
+
+const cacheData = (accessTokenProject:string): void => {
+    fetch(`${process.env.URL_PROJECT_API}/${process.env.VERSION_PROJECT_API}/project/info.json?clear_cache=y`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-AppFrame-Project-Access-Token': accessTokenProject ?? ''
+        }
+    }).then(res => res.json());
+};
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -36,7 +47,11 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
             }, 
             body: JSON.stringify({ id, name, currencies, languages, front})
         });
-        const data = await resFetch.json();
+        const data: {project: TProject} = await resFetch.json();
+
+        if (req.accessTokenProject && data.project) {
+            cacheData(req.accessTokenProject);
+        }
 
         res.json(data);
     } catch (e) {
